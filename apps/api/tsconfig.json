@@ -8,5 +8,5 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true
 	},
-	"include": ["src", "src/apps.ts"]
+	"include": ["src", "src/app.ts"]
 }
