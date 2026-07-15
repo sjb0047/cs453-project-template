@@ -1,10 +1,12 @@
 import express from "express";
 import { env } from "./config/env";
 import { pool } from "./db/pool";
+import { taskRouter } from "./routes/taskRoutes";
 
 const app = express();
 
 app.use(express.json());
+app.use("/tasks", taskRouter);
 
 app.get("/health", (_req, res) => {
 	res.json({
@@ -26,29 +28,6 @@ app.get("/db-health", async (_req, res) => {
 		res.status(500).json({
 			status: "error",
 			database: "disconnected",
-		});
-	}
-});
-
-app.get("/tasks", async (_req, res) => {
-	try {
-		const result = await pool.query(
-			`SELECT id,
-                    title,
-                    description,
-                    status,
-                    created_at AS "createdAt",
-                    updated_at AS "updatedAt"
-             FROM tasks
-             ORDER BY id `,
-		);
-
-		res.json(result.rows);
-	} catch (error) {
-		console.error("Failed to fetch tasks:", error);
-		res.status(500).json({
-			status: "error",
-			message: "Failed to fetch tasks",
 		});
 	}
 });
