@@ -1,5 +1,6 @@
 import { pool } from "../db/pool";
 
+
 export async function getAllTasks() {
   const result = await pool.query(
     `SELECT
