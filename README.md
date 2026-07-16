@@ -1,233 +1,201 @@
+# CS453 Project - Task Management API
 
-# CS453/553 Client-Server Architecture Project
+## Overview
 
-This repository contains the **starter template** for the semester project in  
-**CS453 / CS553 – Client/Server Architectures**.
+This project is a Task Management REST API developed for CS 453 Client/Server Architectures. The application provides a backend service for managing tasks using Node.js, Express, TypeScript, and PostgreSQL.
 
-Students will build and extend a distributed web application over the course
-of the semester. The system will evolve through several architectural stages,
-mirroring the historical evolution of modern web systems.
-
-The goal of the project is to help students understand **how real client/server
-systems are designed and built**, including:
-
-- REST API design
-- database integration
-- authentication and authorization
-- multi-service architectures
-- real-time communication
-- modern API technologies
+Checkpoint 1 focuses on building a REST API that supports CRUD operations, persists data in PostgreSQL, validates client input, and separates application logic into routes, services, and database components.
 
 ---
 
-# Project Overview
+## Features
 
-The semester project is a **Task / Project Management System**.
+Current functionality includes:
 
-The application allows users to:
-
-- create projects
-- create tasks within projects
-- assign tasks to users
-- track task status
-- comment on tasks
-- view project activity
-
-This domain is intentionally simple so that the focus remains on **system
-architecture and communication between components**, rather than complex
-business logic.
+- Create a task
+- View all tasks
+- View a single task by ID
+- Update an existing task
+- Delete a task
+- PostgreSQL database persistence
+- Request validation
+- Automated API tests using Jest and Supertest
 
 ---
 
-# Architecture Overview
+## Technology Stack
 
-The system follows a typical web architecture.
+### Server
 
-```shell
-Browser Client
-|
-v
-REST API
-|
-v
-PostgreSQL
-```
-
-
-Over the semester, the architecture will evolve to include additional
-components such as authentication services, real-time communication,
-and potentially additional APIs.
-
-Example extended architecture:
-
-```shell
-Browser Client
-|
-v
-API Layer
-/
-Auth API Task API
-|
-v
-PostgreSQL
-```
-
----
-
-# Technology Stack
-
-The default project stack is:
-
-Server
-- Node.js
+- Node.js 20
 - TypeScript
 - Express
 
-Database
-- PostgreSQL
+### Database
 
-Development Tools
-- Docker (for database)
+- PostgreSQL
+- Docker
+
+### Development Tools
+
 - npm
+- Jest
+- Supertest
+- ts-jest
+
+---
+
+## Prerequisites
+
+Install the following before running the project:
+
+- Node.js 20
+- Docker Desktop
 - Git
 
-Students who prefer Python may implement the server using **FastAPI**, but
-all examples and starter code will use **TypeScript**.
-
 ---
 
-# Repository Structure
+## Installation
 
-```shell
-cs453-project-template
-│
-├── apps
-│ ├── api
-│ │ Server-side application
-│ │
-│ └── client
-│ Simple browser client
-│
-├── database
-│ Database schema, migrations, and seed data
-│
-├── docs
-│ Architecture documentation
-│
-├── scripts
-│ Utility scripts for development
-│
-├── docker-compose.yml
-│ Starts PostgreSQL database
-│
-└── README.md
-```
+Clone your repository:
 
----
-
-# Development Setup
-
-## 1. Clone the repository
-
-```shell
+```bash
 git clone <your-repository-url>
 cd cs453-project-template
 ```
 
-## 2. Start the database
+Install the root dependencies:
 
-This project uses Docker to run PostgreSQL locally.
-
-```shell
-docker-compose up -d
-```
-
-This will start a PostgreSQL database container.
-
----
-
-## 3. Install dependencies
-
-```shell
-cd apps/api
+```bash
 npm install
 ```
 
+Install the API dependencies:
+
+```bash
+cd apps/api
+npm install
+cd ../..
+```
+
 ---
 
-## 4. Run the server
-```shell
+## Environment Configuration
+
+Create a `.env` file in the project root by copying `.env.example`.
+
+Example:
+
+```text
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/cs453
+PORT=3000
+JWT_SECRET=changeme
+```
+
+---
+
+## Database Setup
+
+Start PostgreSQL:
+
+```bash
+npm run db:start
+```
+
+Create the database tables:
+
+```bash
+docker exec -i cs453-postgres psql -U postgres -d cs453 < database/schema.sql
+```
+
+---
+
+## Running the API
+
+From the project root:
+
+```bash
 npm run dev
 ```
 
+The API runs at:
 
-The API server should start locally.
-
----
-
-# Project Milestones
-
-The project will evolve over several milestones during the semester.
-
-### Milestone 1 – REST API
-
-Students will implement:
-
-- REST endpoints
-- database integration
-- CRUD operations
-- request validation
+```text
+http://localhost:3000
+```
 
 ---
 
-### Milestone 2 – Authentication
+## Running Tests
 
-Students will add:
+From the API directory:
 
-- user accounts
-- password hashing
-- login endpoints
-- JWT authentication
-- protected routes
+```bash
+cd apps/api
+npm test
+```
 
----
+To verify TypeScript compilation:
 
-### Milestone 3 – Architectural Extensions
-
-Students will extend the system with at least one of the following:
-
-- WebSockets for real-time updates
-- GraphQL API
-- multi-service architecture
-- asynchronous messaging
-- advanced API documentation
-
-Graduate students will complete an additional architecture extension and
-design analysis.
+```bash
+npm run build
+```
 
 ---
 
-# Learning Goals
+## API Endpoints
 
-By completing this project students should understand:
-
-- how client/server systems communicate
-- how APIs are designed and implemented
-- how databases integrate with web services
-- how authentication works in distributed systems
-- how modern web architectures evolve over time
-
----
-
-# Academic Integrity
-
-All work submitted for this project must be your own.
-
-Students may use documentation and external references, but copying code
-from other students or online repositories is considered academic misconduct.
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/health` | API health check |
+| GET | `/db-health` | Database health check |
+| GET | `/tasks` | Retrieve all tasks |
+| GET | `/tasks/:id` | Retrieve a task by ID |
+| POST | `/tasks` | Create a task |
+| PATCH | `/tasks/:id` | Update a task |
+| DELETE | `/tasks/:id` | Delete a task |
 
 ---
 
-# License
+## Example Requests
 
-This repository is provided for educational use in CS453/553.
+Create a task:
+
+```bash
+curl -X POST http://localhost:3000/tasks \
+-H "Content-Type: application/json" \
+-d "{\"title\":\"Finish CS453 Checkpoint\",\"status\":\"todo\"}"
+```
+
+Retrieve all tasks:
+
+```bash
+curl http://localhost:3000/tasks
+```
+
+Update a task:
+
+```bash
+curl -X PATCH http://localhost:3000/tasks/1 \
+-H "Content-Type: application/json" \
+-d "{\"status\":\"in-progress\"}"
+```
+
+Delete a task:
+
+```bash
+curl -X DELETE http://localhost:3000/tasks/1
+```
+
+---
+
+## Checkpoint 1 Summary
+
+Completed functionality:
+
+- REST API with CRUD operations
+- PostgreSQL persistence
+- Input validation
+- Proper HTTP status codes
+- Layered architecture (routes, services, database)
+- Automated tests with Jest and Supertest
